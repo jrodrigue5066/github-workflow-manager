@@ -29,5 +29,31 @@ venv/
 
 # Tokens y credenciales
 .env
+.env.*
+!.env.example
 *.token
+*.key
+*.pem
 credentials.json
+secrets.json
+config.local.*
+auth.json
+.secrets/
+
+# GitHub CLI tokens
+gh_token
+.gh_token
+
+# Git credentials
+.git-credentials
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Configuración personal
+.user.ini
+personal.config
+local.settings.json
+

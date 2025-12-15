@@ -1,528 +1,789 @@
 # Crear Repositorio en GitHub
 
-## Objetivo
-Guía simplificada para crear un nuevo repositorio en GitHub y configurarlo con Git Flow, compatible con Windows y Linux.
+## 🎯 Objetivo
+Guía completa y optimizada para crear un nuevo repositorio en GitHub usando GitHub CLI, con Git Flow configurado automáticamente.
 
 ---
 
-## ⚠️ INSTRUCCIONES PARA LLMs/IA
+## 🚀 Método Recomendado: GitHub CLI (Más Rápido y Eficiente)
 
-### Detección del Sistema Operativo
-1. **Windows PowerShell**: Usar comandos nativos de PowerShell
-2. **Linux/Mac Bash**: Usar comandos de terminal Unix
-
-### Proceso Automatizado
-1. Crear repositorio en GitHub (manual o API)
-2. Inicializar Git localmente
-3. Configurar Git Flow (main + develop)
-4. Crear estructura básica
-5. Commit inicial y push
-
-**Ejecutar pasos secuencialmente, pidiendo confirmación solo para decisiones críticas.**
+### ¿Por qué GitHub CLI?
+- ✅ **Más rápido**: Crea el repositorio desde la terminal
+- ✅ **Automatizado**: Configura todo en un solo flujo
+- ✅ **Menos errores**: No necesitas crear manualmente en el navegador
+- ✅ **Autenticación segura**: Usa OAuth en lugar de tokens
 
 ---
 
-## Método 1: Creación Manual (Recomendado - Más Simple)
+## 📦 Paso 1: Instalación de GitHub CLI
 
-### Paso 1: Crear en GitHub Web
-
-1. Ir a: **https://github.com/new**
-2. Completar:
-   - **Repository name**: nombre-del-proyecto
-   - **Description**: Descripción breve
-   - **Visibility**: Public o Private
-   - **NO marcar**: "Initialize this repository with a README"
-3. Click **Create repository**
-
-### Paso 2: Inicializar Localmente
-
-**Windows PowerShell:**
-```powershell
-# Crear carpeta del proyecto
-mkdir nombre-del-proyecto
-cd nombre-del-proyecto
-
-# Inicializar Git
-git init
-
-# Crear README básico
-@"
-# Nombre del Proyecto
-
-Descripción del proyecto.
-
-## Instalación
-
-``````bash
-git clone https://github.com/USUARIO/nombre-del-proyecto.git
-``````
-"@ | Out-File -FilePath "README.md" -Encoding UTF8
-
-# Crear .gitignore
-@"
-# Sistema
-.DS_Store
-Thumbs.db
-
-# IDEs
-.vscode/
-.idea/
-
-# Logs
-*.log
-
-# Credenciales
-.env
-*.token
-"@ | Out-File -FilePath ".gitignore" -Encoding UTF8
-```
-
-**Linux/Mac:**
-```bash
-# Crear carpeta del proyecto
-mkdir nombre-del-proyecto
-cd nombre-del-proyecto
-
-# Inicializar Git
-git init
-
-# Crear README básico
-cat > README.md << 'EOF'
-# Nombre del Proyecto
-
-Descripción del proyecto.
-
-## Instalación
-
-```bash
-git clone https://github.com/USUARIO/nombre-del-proyecto.git
-```
-EOF
-
-# Crear .gitignore
-cat > .gitignore << 'EOF'
-# Sistema
-.DS_Store
-Thumbs.db
-
-# IDEs
-.vscode/
-.idea/
-
-# Logs
-*.log
-
-# Credenciales
-.env
-*.token
-EOF
-```
-
-### Paso 3: Configurar Git Flow
-
-**Ambos sistemas (Windows y Linux):**
-```bash
-# Renombrar rama a main (si es necesario)
-git branch -M main
-
-# Hacer commit inicial
-git add .
-git commit -m "chore: initial commit"
-
-# Crear rama develop
-git checkout -b develop
-
-# Volver a main
-git checkout main
-```
-
-### Paso 4: Conectar con GitHub
-
-```bash
-# Agregar remote (reemplazar USUARIO y REPO)
-git remote add origin https://github.com/USUARIO/nombre-del-proyecto.git
-
-# Verificar remote
-git remote -v
-
-# Push de main
-git push -u origin main
-
-# Push de develop
-git push -u origin develop
-```
-
-### Paso 5: Configurar Rama por Defecto
-
-1. Ir a: `https://github.com/USUARIO/nombre-del-proyecto/settings`
-2. En **Default branch**, cambiar a `develop`
-3. Confirmar el cambio
-
----
-
-## Método 2: Con GitHub CLI (Si está instalado)
-
-### Verificar GitHub CLI
+### Verificar si ya está instalado
 
 ```bash
 gh --version
 ```
 
-Si no está instalado: https://cli.github.com/
+Si ves la versión (ej: `gh version 2.83.2`), **salta al Paso 2**.
 
-### Crear Repositorio Completo
+### Instalación según tu sistema operativo
 
-**Ambos sistemas:**
+#### Windows (PowerShell)
+
+```powershell
+# Opción 1: Con winget (recomendado)
+winget install --id GitHub.cli
+
+# Opción 2: Con Chocolatey
+choco install gh
+
+# Opción 3: Con Scoop
+scoop install gh
+```
+
+**⚠️ Importante para Windows**: Después de instalar, usa la ruta completa la primera vez:
+
+```powershell
+C:\Progra~1\GitHub` CLI\gh.exe --version
+```
+
+O reinicia la terminal para que reconozca el comando `gh`.
+
+#### macOS
+
 ```bash
-# Autenticarse (solo primera vez)
+# Con Homebrew
+brew install gh
+```
+
+#### Linux
+
+**Ubuntu/Debian:**
+```bash
+type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+&& sudo apt update \
+&& sudo apt install gh -y
+```
+
+**Fedora/CentOS/RHEL:**
+```bash
+sudo dnf install gh
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S github-cli
+```
+
+---
+
+## 🔐 Paso 2: Autenticación con GitHub
+
+### Iniciar autenticación
+
+```bash
 gh auth login
+```
 
-# Crear repositorio y clonar
-gh repo create nombre-del-proyecto --public --clone
+### Flujo de autenticación paso a paso
 
-# Entrar al directorio
-cd nombre-del-proyecto
+El comando te hará varias preguntas. Aquí está el flujo completo:
+
+#### 1. ¿Dónde usas GitHub?
+```
+? Where do you use GitHub?
+> GitHub.com
+  Other
+```
+**Selecciona**: `GitHub.com` (presiona Enter)
+
+#### 2. ¿Qué protocolo prefieres?
+```
+? What is your preferred protocol for Git operations on this host?
+> HTTPS
+  SSH
+```
+**Selecciona**: `HTTPS` (presiona Enter)
+
+#### 3. ¿Autenticar Git con tus credenciales de GitHub?
+```
+? Authenticate Git with your GitHub credentials? (Y/n)
+```
+**Escribe**: `Y` (presiona Enter)
+
+#### 4. ¿Cómo quieres autenticarte?
+```
+? How would you like to authenticate GitHub CLI?
+> Login with a web browser
+  Paste an authentication token
+```
+**Selecciona**: `Login with a web browser` (presiona Enter)
+
+#### 5. Código de dispositivo
+```
+! First copy your one-time code: XXXX-XXXX
+Press Enter to open https://github.com/login/device in your browser...
+```
+
+**Pasos**:
+1. **Copia el código** (ej: `E482-0CC4`)
+2. **Presiona Enter** para abrir el navegador
+3. **Inicia sesión en GitHub** (si no lo has hecho)
+   - Usa tu usuario y contraseña
+   - Si tienes 2FA, ingresa tu código de 6 dígitos del authenticator
+4. **Pega el código de dispositivo** en la página que se abrió
+5. **Haz clic en "Continue"**
+6. **Haz clic en "Authorize GitHub CLI"**
+
+#### 6. Confirmación
+```
+✓ Authentication complete.
+✓ Configured git protocol
+✓ Logged in as tu-usuario
+```
+
+### ⚠️ Diferencia importante: Código de Dispositivo vs Código 2FA
+
+- **Código de Dispositivo** (`XXXX-XXXX`): 
+  - Es el código que GitHub CLI te muestra
+  - Lo ingresas en https://github.com/login/device
+  - Tiene 8 caracteres con un guión (ej: `E482-0CC4`)
+  
+- **Código 2FA** (6 dígitos):
+  - Es el código de tu aplicación authenticator (Google Authenticator, Authy, etc.)
+  - Lo usas al iniciar sesión en GitHub
+  - Tiene 6 dígitos (ej: `123456`)
+
+### Verificar autenticación
+
+```bash
+gh auth status
+```
+
+Deberías ver:
+```
+✓ Logged in to github.com as tu-usuario
+✓ Git operations for github.com configured to use https protocol.
+✓ Token: gho_************************************
+```
+
+---
+
+## 📁 Paso 3: Crear Repositorio Completo
+
+### Opción A: Flujo Completo Automatizado (Recomendado)
+
+Este script crea todo de una vez:
+
+**Windows PowerShell:**
+```powershell
+# Variables (MODIFICAR ESTOS VALORES)
+$repoName = "mi-proyecto"
+$description = "Descripción del proyecto"
+$visibility = "public"  # o "private"
+
+# Crear directorio y entrar
+mkdir $repoName
+cd $repoName
+
+# Inicializar Git
+git init
+git branch -M main
 
 # Crear archivos básicos
-echo "# Nombre del Proyecto" > README.md
-echo ".DS_Store" > .gitignore
-echo "Thumbs.db" >> .gitignore
+@"
+# $repoName
 
-# Configurar Git Flow
+$description
+
+## Instalación
+
+``````bash
+git clone https://github.com/tu-usuario/$repoName.git
+cd $repoName
+``````
+
+## Uso
+
+Documenta cómo usar tu proyecto aquí.
+
+## Licencia
+
+MIT
+"@ | Out-File README.md -Encoding UTF8
+
+# Crear .gitignore completo
+@"
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Node modules
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Tokens y credenciales
+.env
+.env.*
+!.env.example
+*.token
+*.key
+*.pem
+credentials.json
+secrets.json
+config.local.*
+auth.json
+.secrets/
+
+# GitHub CLI tokens
+gh_token
+.gh_token
+
+# Git credentials
+.git-credentials
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Configuración personal
+.user.ini
+personal.config
+local.settings.json
+"@ | Out-File .gitignore -Encoding UTF8
+
+# Commit inicial
 git add .
 git commit -m "chore: initial commit"
-git branch develop
+
+# Crear rama develop
+git checkout -b develop
+git checkout main
+
+# Crear repositorio en GitHub
+gh repo create $repoName --$visibility --description "$description" --source=. --remote=origin
+
+# Push de ambas ramas
+git push -u origin main
+git push -u origin develop
+
+# Crear tag inicial
+git tag -a v1.0.0 -m "Initial release"
+git push origin --tags
+
+Write-Host "`n✅ Repositorio creado exitosamente!`n"
+Write-Host "🔗 URL: https://github.com/$(gh api user --jq .login)/$repoName"
+Write-Host "🌿 Ramas: main, develop"
+Write-Host "🏷️  Tag: v1.0.0"
+```
+
+**Linux/Mac:**
+```bash
+# Variables (MODIFICAR ESTOS VALORES)
+REPO_NAME="mi-proyecto"
+DESCRIPTION="Descripción del proyecto"
+VISIBILITY="public"  # o "private"
+
+# Crear directorio y entrar
+mkdir $REPO_NAME
+cd $REPO_NAME
+
+# Inicializar Git
+git init
+git branch -M main
+
+# Crear README
+cat > README.md << EOF
+# $REPO_NAME
+
+$DESCRIPTION
+
+## Instalación
+
+\`\`\`bash
+git clone https://github.com/tu-usuario/$REPO_NAME.git
+cd $REPO_NAME
+\`\`\`
+
+## Uso
+
+Documenta cómo usar tu proyecto aquí.
+
+## Licencia
+
+MIT
+EOF
+
+# Crear .gitignore completo
+cat > .gitignore << 'EOF'
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Node modules
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Tokens y credenciales
+.env
+.env.*
+!.env.example
+*.token
+*.key
+*.pem
+credentials.json
+secrets.json
+config.local.*
+auth.json
+.secrets/
+
+# GitHub CLI tokens
+gh_token
+.gh_token
+
+# Git credentials
+.git-credentials
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Configuración personal
+.user.ini
+personal.config
+local.settings.json
+EOF
+
+# Commit inicial
+git add .
+git commit -m "chore: initial commit"
+
+# Crear rama develop
+git checkout -b develop
+git checkout main
+
+# Crear repositorio en GitHub
+gh repo create $REPO_NAME --$VISIBILITY --description "$DESCRIPTION" --source=. --remote=origin
+
+# Push de ambas ramas
+git push -u origin main
+git push -u origin develop
+
+# Crear tag inicial
+git tag -a v1.0.0 -m "Initial release"
+git push origin --tags
+
+echo ""
+echo "✅ Repositorio creado exitosamente!"
+echo "🔗 URL: https://github.com/$(gh api user --jq .login)/$REPO_NAME"
+echo "🌿 Ramas: main, develop"
+echo "🏷️  Tag: v1.0.0"
+```
+
+### Opción B: Paso a Paso Manual
+
+Si prefieres hacerlo paso a paso:
+
+```bash
+# 1. Crear directorio
+mkdir mi-proyecto
+cd mi-proyecto
+
+# 2. Inicializar Git
+git init
+git branch -M main
+
+# 3. Crear archivos (README.md, .gitignore, etc.)
+echo "# Mi Proyecto" > README.md
+
+# 4. Commit inicial
+git add .
+git commit -m "chore: initial commit"
+
+# 5. Crear rama develop
+git checkout -b develop
+git checkout main
+
+# 6. Crear repo en GitHub
+gh repo create mi-proyecto --public --description "Mi proyecto"
+
+# 7. Conectar y push
+git remote add origin https://github.com/tu-usuario/mi-proyecto.git
 git push -u origin main
 git push -u origin develop
 ```
 
 ---
 
-## Método 3: Con API de GitHub (Avanzado)
+## 🔧 Configuración Post-Creación
 
-### Requisitos
-- Token de acceso personal de GitHub
-- Obtener en: https://github.com/settings/tokens
-
-### Crear Repositorio via API
-
-**Windows PowerShell:**
-```powershell
-$token = "TU_TOKEN_AQUI"
-$headers = @{
-    Authorization = "Bearer $token"
-    Accept = "application/vnd.github.v3+json"
-}
-
-$body = @{
-    name = "nombre-del-proyecto"
-    description = "Descripción del proyecto"
-    private = $false
-    auto_init = $false
-} | ConvertTo-Json
-
-$repo = Invoke-RestMethod -Uri "https://api.github.com/user/repos" -Method Post -Headers $headers -Body $body -ContentType "application/json"
-
-Write-Host "✅ Repositorio creado: $($repo.html_url)"
-```
-
-**Linux/Mac:**
-```bash
-TOKEN="TU_TOKEN_AQUI"
-
-curl -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/user/repos \
-  -d '{
-    "name": "nombre-del-proyecto",
-    "description": "Descripción del proyecto",
-    "private": false,
-    "auto_init": false
-  }'
-```
-
-Luego seguir **Paso 2, 3 y 4** del Método 1.
-
----
-
-## Estructura Recomendada Git Flow
-
-```
-Repositorio
-├── main (producción)
-│   └── Tag: v1.0.0, v1.1.0, etc.
-│
-└── develop (desarrollo)
-    ├── feature/nueva-funcionalidad
-    ├── feature/otra-funcionalidad
-    └── release/1.1.0
-```
-
-### Flujo de Trabajo
+### Cambiar rama por defecto a develop
 
 ```bash
-# 1. Crear feature desde develop
-git checkout develop
-git checkout -b feature/nombre-feature
-
-# 2. Desarrollar
-# ... hacer cambios ...
-git add .
-git commit -m "feat: descripción"
-
-# 3. Push y crear PR
-git push -u origin feature/nombre-feature
-# Crear PR en GitHub: develop ← feature/nombre-feature
-
-# 4. Después de aprobar PR, mergear y eliminar
-git checkout develop
-git pull origin develop
-git branch -d feature/nombre-feature
+gh repo edit --default-branch develop
 ```
 
----
+O manualmente:
+1. Ve a: `https://github.com/tu-usuario/tu-repo/settings`
+2. En **Default branch**, selecciona `develop`
+3. Haz clic en **Update**
 
-## Comandos Útiles
+### Verificar configuración
 
-### Verificar Estado
 ```bash
+# Ver repositorio
+gh repo view
+
 # Ver ramas
 git branch -a
 
-# Ver remote
+# Ver remotes
 git remote -v
-
-# Ver último commit
-git log -1
 
 # Ver estado
 git status
 ```
 
-### Sincronizar
+---
+
+## 🌿 Flujo de Trabajo con Git Flow
+
+### Crear una nueva feature
+
 ```bash
-# Actualizar desde GitHub
+# 1. Asegurarse de estar en develop actualizado
+git checkout develop
 git pull origin develop
 
-# Subir cambios
-git push origin develop
+# 2. Crear rama feature
+git checkout -b feature/nombre-funcionalidad
+
+# 3. Desarrollar
+# ... hacer cambios ...
+git add .
+git commit -m "feat: descripción de la funcionalidad"
+
+# 4. Push y crear PR
+git push -u origin feature/nombre-funcionalidad
+
+# 5. Crear Pull Request
+gh pr create --base develop --head feature/nombre-funcionalidad --title "Nueva funcionalidad" --body "Descripción detallada"
+
+# 6. Después de aprobar y mergear el PR
+git checkout develop
+git pull origin develop
+git branch -d feature/nombre-funcionalidad
 ```
 
-### Gestión de Ramas
+### Crear un release
+
 ```bash
-# Crear rama
-git checkout -b nombre-rama
+# 1. Desde develop, crear rama release
+git checkout develop
+git pull origin develop
+git checkout -b release/1.1.0
 
-# Cambiar de rama
-git checkout nombre-rama
+# 2. Ajustes finales (versiones, changelog, etc.)
+# ... hacer cambios ...
+git commit -am "chore: bump version to 1.1.0"
 
-# Eliminar rama local
-git branch -d nombre-rama
+# 3. Merge a main
+git checkout main
+git merge release/1.1.0
+git tag -a v1.1.0 -m "Release 1.1.0"
 
-# Eliminar rama remota
-git push origin --delete nombre-rama
+# 4. Merge de vuelta a develop
+git checkout develop
+git merge release/1.1.0
+
+# 5. Push todo
+git push origin main develop --tags
+
+# 6. Eliminar rama release
+git branch -d release/1.1.0
 ```
 
 ---
 
-## Checklist de Creación
+## ❌ Solución de Problemas Comunes
 
-### Antes de Empezar
-- [ ] Tener cuenta de GitHub
-- [ ] Git instalado y configurado
+### 1. GitHub CLI no reconocido después de instalación (Windows)
+
+**Síntoma:**
+```
+gh : El término 'gh' no se reconoce como nombre de un cmdlet...
+```
+
+**Soluciones:**
+
+**Opción A: Usar ruta completa**
+```powershell
+C:\Progra~1\GitHub` CLI\gh.exe --version
+```
+
+**Opción B: Reiniciar terminal**
+Cierra y abre una nueva ventana de PowerShell.
+
+**Opción C: Agregar al PATH manualmente**
+```powershell
+$env:Path += ";C:\Program Files\GitHub CLI"
+```
+
+### 2. Error: "repository not found" al hacer push
+
+**Causa**: El repositorio no existe en GitHub.
+
+**Solución**: Crear el repositorio primero
+```bash
+gh repo create nombre-repo --public
+```
+
+### 3. Error: "gh: command not found" (Linux/Mac)
+
+**Causa**: GitHub CLI no instalado.
+
+**Solución**: Instalar según tu sistema (ver Paso 1).
+
+### 4. Error: "failed to authenticate"
+
+**Causa**: No estás autenticado o el token expiró.
+
+**Solución**: Volver a autenticar
+```bash
+gh auth login
+```
+
+### 5. Confusión entre código de dispositivo y código 2FA
+
+**Recuerda**:
+- **Código de dispositivo** (8 caracteres con guión): Lo da GitHub CLI, lo ingresas en https://github.com/login/device
+- **Código 2FA** (6 dígitos): Lo da tu app authenticator, lo usas al iniciar sesión en GitHub
+
+### 6. Error: "Permission denied (publickey)"
+
+**Causa**: Intentando usar SSH sin configurar.
+
+**Solución**: Usar HTTPS (ya configurado si seguiste el Paso 2).
+
+### 7. Error: "remote origin already exists"
+
+**Solución**:
+```bash
+git remote remove origin
+git remote add origin https://github.com/usuario/repo.git
+```
+
+### 8. Verificar si GitHub CLI está autenticado
+
+```bash
+gh auth status
+```
+
+Si no está autenticado, ejecuta:
+```bash
+gh auth login
+```
+
+---
+
+## 📋 Checklist Rápido
+
+### Antes de empezar
+- [ ] GitHub CLI instalado (`gh --version`)
+- [ ] Autenticado en GitHub (`gh auth status`)
 - [ ] Decidir nombre del repositorio
-- [ ] Decidir visibilidad (público/privado)
+- [ ] Decidir visibilidad (public/private)
 
 ### Creación
-- [ ] Crear repositorio en GitHub
-- [ ] Inicializar Git localmente
+- [ ] Crear directorio del proyecto
+- [ ] Inicializar Git (`git init`)
 - [ ] Crear README.md
-- [ ] Crear .gitignore
+- [ ] Crear .gitignore (con protección de credenciales)
 - [ ] Commit inicial
 - [ ] Crear rama develop
-- [ ] Conectar con GitHub (remote)
+- [ ] Crear repositorio en GitHub (`gh repo create`)
 - [ ] Push de main y develop
+- [ ] Crear tag v1.0.0
 - [ ] Configurar develop como rama por defecto
 
 ### Verificación
 - [ ] Repositorio visible en GitHub
 - [ ] README.md se muestra correctamente
-- [ ] Ambas ramas (main y develop) existen
-- [ ] Rama por defecto es develop
+- [ ] Ambas ramas existen (main y develop)
+- [ ] Tag v1.0.0 visible
+- [ ] .gitignore protege datos sensibles
 
 ---
 
-## Solución de Problemas Comunes
+## 🔒 Seguridad: Protección de Datos Sensibles
 
-### Error: "gh: command not found"
-**Causa**: GitHub CLI no instalado  
-**Solución**: Usar Método 1 (manual) o instalar desde https://cli.github.com/
+### ⚠️ IMPORTANTE: Nunca subas a GitHub
 
-### Error: "Permission denied (publickey)"
-**Causa**: SSH no configurado  
-**Solución**: Usar HTTPS en lugar de SSH
-```bash
-# HTTPS (recomendado)
-git remote add origin https://github.com/USUARIO/REPO.git
+- ❌ Contraseñas
+- ❌ Tokens de API
+- ❌ Claves privadas (SSH, PEM, etc.)
+- ❌ Archivos `.env` con credenciales
+- ❌ Configuraciones personales con datos sensibles
 
-# En lugar de SSH
-# git remote add origin git@github.com:USUARIO/REPO.git
-```
+### ✅ Usa .gitignore
 
-### Error: "remote origin already exists"
-**Solución**: Eliminar y volver a agregar
-```bash
-git remote remove origin
-git remote add origin https://github.com/USUARIO/REPO.git
-```
+El `.gitignore` incluido en los scripts protege automáticamente:
 
-### Error: "failed to push some refs"
-**Solución**: Pull primero, luego push
-```bash
-git pull origin main --allow-unrelated-histories
-git push origin main
-```
-
----
-
-## Plantilla Rápida (Copy-Paste)
-
-### Para Windows PowerShell
-
-```powershell
-# Variables (MODIFICAR ESTOS VALORES)
-$repoName = "mi-proyecto"
-$userName = "tu-usuario"
-$description = "Descripción del proyecto"
-
-# Crear estructura
-mkdir $repoName
-cd $repoName
-git init
-
-# Crear archivos
-@"
-# $repoName
-
-$description
-"@ | Out-File README.md -Encoding UTF8
-
-".DS_Store`nThumbs.db`n.vscode/`n.idea/`n*.log`n.env" | Out-File .gitignore -Encoding UTF8
-
-# Git Flow
-git add .
-git commit -m "chore: initial commit"
-git branch -M main
-git checkout -b develop
-git checkout main
-
-# Conectar (primero crear repo en GitHub)
-git remote add origin "https://github.com/$userName/$repoName.git"
-git push -u origin main
-git push -u origin develop
-
-Write-Host "`n✅ Repositorio creado y configurado!`n"
-Write-Host "URL: https://github.com/$userName/$repoName"
-```
-
-### Para Linux/Mac
-
-```bash
-# Variables (MODIFICAR ESTOS VALORES)
-REPO_NAME="mi-proyecto"
-USER_NAME="tu-usuario"
-DESCRIPTION="Descripción del proyecto"
-
-# Crear estructura
-mkdir $REPO_NAME
-cd $REPO_NAME
-git init
-
-# Crear archivos
-cat > README.md << EOF
-# $REPO_NAME
-
-$DESCRIPTION
-EOF
-
-cat > .gitignore << EOF
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-*.log
+```gitignore
+# Tokens y credenciales
 .env
-EOF
+.env.*
+!.env.example
+*.token
+*.key
+*.pem
+credentials.json
+secrets.json
+config.local.*
+auth.json
+.secrets/
 
-# Git Flow
-git add .
-git commit -m "chore: initial commit"
-git branch -M main
-git checkout -b develop
-git checkout main
+# GitHub CLI tokens
+gh_token
+.gh_token
 
-# Conectar (primero crear repo en GitHub)
-git remote add origin "https://github.com/$USER_NAME/$REPO_NAME.git"
-git push -u origin main
-git push -u origin develop
+# Git credentials
+.git-credentials
 
-echo ""
-echo "✅ Repositorio creado y configurado!"
-echo "URL: https://github.com/$USER_NAME/$REPO_NAME"
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Configuración personal
+.user.ini
+personal.config
+local.settings.json
+```
+
+### 📝 Buena práctica: Usar archivos de ejemplo
+
+En lugar de subir `.env` con credenciales, crea `.env.example`:
+
+```bash
+# .env.example (SÍ se sube a GitHub)
+DATABASE_URL=postgresql://usuario:password@localhost:5432/dbname
+API_KEY=tu_api_key_aqui
+SECRET_TOKEN=tu_token_aqui
+```
+
+```bash
+# .env (NO se sube a GitHub - está en .gitignore)
+DATABASE_URL=postgresql://admin:mipassword123@localhost:5432/produccion
+API_KEY=sk_live_51H...
+SECRET_TOKEN=ghp_abc123...
 ```
 
 ---
 
-## Mejores Prácticas
+## 📚 Métodos Alternativos
+
+### Método Manual (Sin GitHub CLI)
+
+Si no puedes o no quieres instalar GitHub CLI:
+
+1. **Crear en GitHub Web**: https://github.com/new
+2. **Clonar localmente**:
+   ```bash
+   git clone https://github.com/usuario/repo.git
+   cd repo
+   ```
+3. **Configurar Git Flow**:
+   ```bash
+   git checkout -b develop
+   git push -u origin develop
+   ```
+
+### Método con API de GitHub
+
+Para automatización avanzada, usa la API:
+
+```bash
+# Crear repositorio
+curl -X POST \
+  -H "Authorization: Bearer TU_TOKEN" \
+  -H "Accept: application/vnd.github.v3+json" \
+  https://api.github.com/user/repos \
+  -d '{"name":"mi-repo","description":"Descripción","private":false}'
+```
+
+---
+
+## 🎓 Mejores Prácticas
 
 ### Nombres de Repositorio
-✅ **Usar**:
-- Minúsculas
-- Guiones para separar palabras
-- Nombres descriptivos
-- Ejemplos: `mi-proyecto`, `api-rest`, `web-app`
+✅ **Usar**: `mi-proyecto`, `api-rest`, `web-app`  
+❌ **Evitar**: `Mi Proyecto`, `API_REST`, `proyecto123`
 
-❌ **Evitar**:
-- Espacios
-- Caracteres especiales
-- Nombres muy largos
-- Ejemplos: `Mi Proyecto`, `API_REST`, `proyecto-super-mega-ultra-largo`
-
-### Commits Iniciales
-✅ **Usar**: `chore: initial commit` o `chore: initial project structure`  
-❌ **Evitar**: `first commit`, `init`, `start`
+### Mensajes de Commit
+✅ **Usar**: `feat: add login`, `fix: resolve bug`, `docs: update README`  
+❌ **Evitar**: `update`, `changes`, `fix`
 
 ### Estructura de Ramas
-✅ **Usar**:
-- `main` para producción
-- `develop` para desarrollo
-- `feature/nombre` para features
-
-❌ **Evitar**:
-- `master` (obsoleto, usar `main`)
-- Trabajar directamente en `main`
-- Nombres genéricos como `test`, `new`
+✅ **Usar**: `main` (producción), `develop` (desarrollo), `feature/nombre`  
+❌ **Evitar**: `master`, trabajar directamente en `main`
 
 ---
 
-## Resumen de Métodos
+## 📖 Recursos Adicionales
 
-| Método | Complejidad | Requiere | Velocidad | Recomendado |
-|--------|-------------|----------|-----------|-------------|
-| **Manual** | Baja | Solo navegador | Media | ✅ Sí |
-| **GitHub CLI** | Media | gh instalado | Rápida | Si está instalado |
-| **API** | Alta | Token de acceso | Rápida | Para automatización |
-
----
-
-## Recursos Adicionales
-
-- **GitHub Docs**: https://docs.github.com/
+- **GitHub CLI Docs**: https://cli.github.com/manual/
 - **Git Flow**: https://nvie.com/posts/a-successful-git-branching-model/
-- **GitHub CLI**: https://cli.github.com/
-- **Git Cheat Sheet**: https://education.github.com/git-cheat-sheet-education.pdf
+- **GitHub Docs**: https://docs.github.com/
+- **Conventional Commits**: https://www.conventionalcommits.org/
 
 ---
 
-**Última actualización**: Diciembre 2025
+**Última actualización**: Diciembre 2025  
+**Versión**: 2.0 - Optimizada con GitHub CLI

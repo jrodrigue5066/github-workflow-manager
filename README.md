@@ -11,9 +11,10 @@
 
 ##  Documentación
 
-1. **[Listado de Proyectos](docs/Listado-de-proyectos.md)** - Conectar a GitHub y listar repositorios
-2. **[Listado de Pull Requests](docs/Listado-de-pull-request.md)** - Gestión de Pull Requests
-3. **[Trabajando con un Repositorio](docs/Trabajando-con-un-repositorio.md)** - Workflow completo con Git Flow
+1. **[Repository Creation Guide](docs/repository-creation-guide.md)** - Complete guide for creating GitHub repositories with Git Flow
+2. **[List Repositories Guide](docs/list-repositories-guide.md)** - Connect to GitHub and list all repositories
+3. **[List Pull Requests Guide](docs/list-pull-requests-guide.md)** - Manage and list Pull Requests
+4. **[Repository Workflow Guide](docs/repository-workflow-guide.md)** - Complete workflow with Git Flow
 
 ##  Inicio Rápido
 
